@@ -3,10 +3,13 @@ import { Box, Text } from 'react-native-design-utility';
 import OnboardingLogo from '../commons/OnBoardingLogo';
 import { TouchableOpacity, Alert, Animated } from 'react-native';
 import LoginButton from '../commons/LoginButton';
+import { FacebookApi } from '../api/Facebook';
+import { GoogleApi } from '../api/Google';
 
+const BoxAnimated = Animated.createAnimatedComponent(Box);
 export default class LoginScreen extends Component {
 	state = {
-		opacity: new Animated.Value(0),                             
+		opacity: new Animated.Value(0),
 		position: new Animated.Value(0)
 	};
 
@@ -29,12 +32,22 @@ export default class LoginScreen extends Component {
 			useNativeDriver: true
 		}).start();
 	};
-	onGooglePress = () => {
-		Alert.alert('Google press');
+	onGooglePress = async () => {
+		try {
+            const token = await GoogleApi.loginAsync() 
+            console.log('token', token)
+         } catch (error) {
+             console.log(error)
+         }
 	};
 
-	onFacebookPress = () => {
-		Alert.alert('Facebook press');
+	onFacebookPress = async () => {
+        try {
+           const token = await FacebookApi.loginAsync() 
+           console.log('token', token)
+        } catch (error) {
+            console.log(error)
+        }
 	};
 	render() {
 		const { opacity } = this.state;
@@ -45,9 +58,9 @@ export default class LoginScreen extends Component {
 		});
 		return (
 			<Box f={1} center bg="white">
-				<Animated.View
+				<BoxAnimated
+					f={1}
 					style={{
-						flex: 1,
 						transform: [
 							{
 								translateY: logoTranslate
@@ -58,16 +71,16 @@ export default class LoginScreen extends Component {
 					<Box f={1} center>
 						<OnboardingLogo />
 					</Box>
-				</Animated.View>
+				</BoxAnimated>
 
-				<Animated.View style={{ flex: 0.9, width: '100%', opacity }}>
+				<BoxAnimated f={0.9} style={{ width: '100%', opacity }}>
 					<LoginButton onPress={this.onGooglePress} type="google">
 						Continue with Google
 					</LoginButton>
 					<LoginButton onPress={this.onFacebookPress} type="facebook">
 						Continue with Facebook
 					</LoginButton>
-				</Animated.View>
+				</BoxAnimated>
 			</Box>
 		);
 	}
